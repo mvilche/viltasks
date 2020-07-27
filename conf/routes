@@ -19,6 +19,7 @@ GET     /task/createTask                         Task.CreateTask
 GET     /task/delete                         Task.Delete
 GET     /task/clean                         Task.Clean
 GET     /task/cleansuccess                         Task.Cleansuccess
+GET     /task/sintaxis                         Task.Sintaxis
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

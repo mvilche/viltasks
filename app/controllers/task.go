@@ -31,6 +31,10 @@ func (c Task) List() revel.Result {
 	return c.Render(t)
 }
 
+func (c Task) Sintaxis() revel.Result {
+	return c.Render()
+}
+
 func (c Task) Status() revel.Result {
 
 	t := models.ListFailedJob()

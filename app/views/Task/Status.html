@@ -26,10 +26,9 @@
   <br>
    {{range $index, $i := .s}}
   <ul class="list-group">
- 
     <li class="list-group-item d-flex justify-content-between align-items-center">
       {{$i.Name}}
-      <span class="badge badge-success badge-pill">Última ejecucion {{$i.Date}}</span>
+      <span class="badge badge-light badge-pill">Última ejecución {{$i.Date}}</span>
     </li>
   </ul>
 {{end}}

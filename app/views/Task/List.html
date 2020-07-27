@@ -8,6 +8,7 @@
 <button type="submit" class="btn btn-primary">Crear nuevo task</button>
 </form>
 {{else}}
+<div class="container">
 <form action=/task/create method="GET">
 <button type="submit" class="btn btn-primary">Crear nuevo task</button>
 </form>
@@ -20,8 +21,7 @@
       <th scope="row">Descripción</th>
       <th scope="row">Comando</th>
       <th scope="row">Tiempo</th>
-      <th scope="row">TaskId</th>
-      <th scope="row"></th>
+      <th scope="row">Eliminar</th>
     </tr>
   </thead>
   <tbody>
@@ -33,13 +33,13 @@
       <td>{{$element.Description}}</td>
       <td>{{$element.Command}}</td>
       <td>{{$element.Time}}</td>
-      <td>{{$element.CronId}}</td>
-      <td><button type="submit" class="btn btn-danger btn-sm">Eliminar</button></td>
+      <td><button type="submit" class="btn btn-danger btn-sm">x</button></td>
     </tr>
   </form>
     {{end}}
   </tbody>
 </table>
+</div>
 {{end}} 
 </div>
 {{template "footer.html" .}}

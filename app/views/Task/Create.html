@@ -2,6 +2,7 @@
 {{template "header.html" .}}
 
 <div class="jumbotron">
+  <div class="container">
   <form action=/task/createTask method="GET">
     <fieldset>
       <legend>Nueva Tarea</legend>
@@ -20,7 +21,7 @@
         <small id="commandHelp" class="form-text text-muted">Ejemplo: curl -v --fail http://localhost:8080</small>
       </div>
       <div class="form-group col-sm-6">
-        <label for="name">Tiempo</label>
+        <label for="name">Tiempo</label> <a href="/task/sintaxis"> - ver sintaxis</a>
         <input type="text" name="time" class="form-control" id="time" aria-describedby="timeHelp" placeholder="*/15 * * * *">
         <small id="timeHelp" class="form-text text-muted">Ejemplo de ejecución cada 15 minutos: */15 * * * * </small>
       </div>
