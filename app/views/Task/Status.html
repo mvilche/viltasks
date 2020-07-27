@@ -4,14 +4,19 @@
 {{$t := .t}}
 
 {{if not .t}}
-<div class="jumbotron">
-  <div class=" container alert alert-dismissible alert-success">
-    <strong>Todo genial!</strong> No hay tasks con errores.
-  </div>
-  <br>
-
   {{ if not .s}}
+  <div class="jumbotron">
+    <div class="container alert alert-dismissible alert-primary">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <strong>Ops!</strong> No se encuentras tareas cargadas o en ejecución.
+    </div>
+</div>
   {{else}}
+  <div class="jumbotron">
+    <div class=" container alert alert-dismissible alert-success">
+      <strong>Todo genial!</strong> No hay tasks con errores.
+    </div>
+    <br>
   <div class="container">
     <form action=/task/cleansuccess method="GET">
       <button type="submit" class="btn btn-primary">Limpiar ejecuciones</button>
