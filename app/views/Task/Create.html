@@ -1,0 +1,40 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<div class="jumbotron">
+  <form action=/task/createTask method="GET">
+    <fieldset>
+      <legend>Nueva Tarea</legend>
+      <div class="form-group col-sm-6">
+        <label for="name">Nombre</label>
+        <input type="text" name="name" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Ingrese el nombre">
+        <small id="nameHelp" class="form-text text-muted">Nombre para la tarea, el mismo debe ser unico en el sistema</small>
+      </div>
+      <div class="form-group col-sm-6">
+        <label for="desc">Descripción de la tarea</label>
+        <textarea name="desc" class="form-control" id="desc" rows="3"></textarea>
+      </div>
+      <div class="form-group col-sm-6">
+        <label for="name">Comando</label>
+        <input type="text" name="command" class="form-control" id="command" aria-describedby="commandHelp" placeholder="Ingrese el comando">
+        <small id="commandHelp" class="form-text text-muted">Ejemplo: curl -v --fail http://localhost:8080</small>
+      </div>
+      <div class="form-group col-sm-6">
+        <label for="name">Tiempo</label>
+        <input type="text" name="time" class="form-control" id="time" aria-describedby="timeHelp" placeholder="*/15 * * * *">
+        <small id="timeHelp" class="form-text text-muted">Ejemplo de ejecución cada 15 minutos: */15 * * * * </small>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <br>
+      <br>
+      <div class="row">
+        <div class="span6">
+          {{template "flash.html" .}}
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+
+{{template "footer.html" .}}

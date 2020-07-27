@@ -1,0 +1,45 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<div class="jumbotron">
+{{if not .t}}
+<h3>No se encontraron tareas en el sistema.</h3>
+<form action=/task/create method="GET">
+<button type="submit" class="btn btn-primary">Crear nuevo task</button>
+</form>
+{{else}}
+<form action=/task/create method="GET">
+<button type="button" class="btn btn-primary">Crear nuevo task</button>
+</form>
+<br>
+<br>
+<table class="table table-hover">
+  <thead>
+    <tr class="table-dark">
+      <th scope="row">Nombre</th>
+      <th scope="row">Descripción</th>
+      <th scope="row">Comando</th>
+      <th scope="row">Tiempo</th>
+      <th scope="row">TaskId</th>
+      <th scope="row"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range $index, $element := .t}}
+    <form action="/task/delete" method="GET">
+    <input id="id" name="id" type="hidden" value="{{$element.CronId}}">
+    <tr class="table-light">
+      <td>{{$element.Name}}</td>
+      <td>{{$element.Description}}</td>
+      <td>{{$element.Command}}</td>
+      <td>{{$element.Time}}</td>
+      <td>{{$element.CronId}}</td>
+      <td><button type="submit" class="btn btn-danger btn-sm">Eliminar</button></td>
+    </tr>
+  </form>
+    {{end}}
+  </tbody>
+</table>
+{{end}} 
+</div>
+{{template "footer.html" .}}

@@ -1,0 +1,43 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+{{if not .t}}
+<div class="jumbotron">
+  <div class="alert alert-dismissible alert-success">
+    <strong>Todo genial!</strong> No hay tasks con errores.
+  </div>
+</div>
+{{else}}
+<div class="jumbotron">
+  <div class="alert alert-dismissible alert-danger">
+    <strong>Se encontraron problemas! </strong> Verifique la lista de tareas fallidas.
+  </div>
+  <br>
+  <br>
+  <form action=/task/clean method="GET">
+  <button type="submit" class="btn btn-primary">Limpiar errores</button>
+</form>
+  <br>
+  <br>
+  <table class="table table-hover">
+    <thead>
+      <tr class="table-dark">
+        <th scope="row">Tarea</th>
+        <th scope="row">Fecha</th>
+        <th scope="row">Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range $index, $element := .t}}
+      <tr class="table-light">
+        <td>{{$element.Name}}</td>
+        <td>{{$element.Date}}</td>
+        <td>{{$element.Output}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table> 
+  </div>
+</div>
+{{end}}
+
+{{template "footer.html" .}}
