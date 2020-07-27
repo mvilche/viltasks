@@ -34,6 +34,13 @@ func (c Task) List() revel.Result {
 func (c Task) Status() revel.Result {
 
 	t := models.ListFailedJob()
+	s := models.SuccesJob()
+
+	if len(t) <= 0 {
+
+		return c.Render(s)
+	}
+
 	return c.Render(t)
 }
 
@@ -78,5 +85,10 @@ func (c Task) Create() revel.Result {
 
 func (c Task) Clean() revel.Result {
 	models.CleanFailedJobs()
+	return c.Redirect(Task.Status)
+}
+
+func (c Task) Cleansuccess() revel.Result {
+	models.CleanSuccessdJobs()
 	return c.Redirect(Task.Status)
 }

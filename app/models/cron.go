@@ -52,6 +52,20 @@ func NewFailedCronTask(t FailedCronTask) *FailedCronTask {
 	}
 }
 
+type SuccessCronTask struct {
+	// DefaultModel add _id,created_at and updated_at fields to the Model
+	mgm.DefaultModel `bson:",inline"`
+	Name             string `json:"name" bson:"name"`
+	Date             string `json:"date" bson:"date"`
+}
+
+func NewSuccessCronTask(t SuccessCronTask) *SuccessCronTask {
+	return &SuccessCronTask{
+		Name: t.Name,
+		Date: t.Date,
+	}
+}
+
 type CronTaskConfig struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
 	mgm.DefaultModel `bson:",inline"`
@@ -144,38 +158,6 @@ func StopCron() error {
 	return gerr
 }
 
-func AddInitialjob(t CronTask) {
-
-	c := GetCron()
-
-	c.AddFunc(t.Time, func() {
-
-		out, err := exec.Command("/bin/bash", "-c", t.Command).CombinedOutput()
-
-		if err != nil {
-			revel.AppLog.Error("Error ejecutando task")
-			revel.AppLog.Error(string(out), err.Error(), nil)
-			var f FailedCronTask
-
-			f.Name = t.Name
-			f.CronId = t.CronId
-			f.Output = string(out) + " - " + err.Error()
-			f.Date = time.Now().Format("2006-01-02 15:04:05")
-			failed := NewFailedCronTask(f)
-
-			err := mgm.Coll(failed).Create(failed)
-			if err != nil {
-				revel.AppLog.Error(err.Error())
-
-			}
-		} else {
-
-			revel.AppLog.Debug(string(out))
-
-		}
-	})
-}
-
 func Addjob(t CronTask) error {
 
 	c := GetCron()
@@ -211,6 +193,27 @@ func Addjob(t CronTask) error {
 			}
 		} else {
 			revel.AppLog.Debug("Task: " + t.Name)
+			var sTask SuccessCronTask
+			sTask.Name = t.Name
+			sTask.Date = time.Now().Format("2006-01-02 15:04:05")
+			succes := NewSuccessCronTask(sTask)
+
+			find := mgm.Coll(succes).First(bson.M{"name": succes.Name}, succes)
+			if find != nil {
+
+				err2 := mgm.Coll(succes).Create(succes)
+				if err2 != nil {
+					revel.AppLog.Error(err.Error())
+				}
+
+			} else {
+				succes.Date = time.Now().Format("2006-01-02 15:04:05")
+				err := mgm.Coll(succes).Update(succes)
+				if err != nil {
+					revel.AppLog.Error(err.Error())
+				}
+			}
+
 			revel.AppLog.Debug(string(out))
 
 		}
@@ -244,6 +247,13 @@ func ListJob() []CronTask {
 	return result
 }
 
+func SuccesJob() []SuccessCronTask {
+
+	result := []SuccessCronTask{}
+	mgm.Coll(&SuccessCronTask{}).SimpleFind(&result, bson.D{{}})
+	return result
+}
+
 func ListFailedJob() []FailedCronTask {
 
 	result := []FailedCronTask{}
@@ -268,6 +278,11 @@ func Remove(id cron.EntryID) {
 func CleanFailedJobs() error {
 
 	return mgm.Coll(&FailedCronTask{}).Drop(mgm.Ctx())
+}
+
+func CleanSuccessdJobs() error {
+
+	return mgm.Coll(&SuccessCronTask{}).Drop(mgm.Ctx())
 }
 
 func Entry() {
