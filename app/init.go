@@ -1,6 +1,7 @@
 package app
 
 import (
+	"os"
 	"viltasks/app/models"
 
 	"github.com/revel/revel"
@@ -38,7 +39,7 @@ func init() {
 	// revel.OnAppStart(ExampleStartupScript)
 	// revel.OnAppStart(InitDB)
 	revel.OnAppStart(InitMigrations)
-	revel.OnAppStart(InitCron)
+	//revel.OnAppStart(InitCron)
 }
 
 // HeaderFilter adds common security headers
@@ -85,8 +86,14 @@ func InitMigrations() {
 			revel.AppLog.Info("Dat6abase migration finish")
 		}
 
+	} else {
+
+		revel.AppLog.Error("Erro open database ", err.Error)
+		os.Exit(1)
 	}
 	models.CloseSQL(db)
+
+	InitCron()
 }
 
 func InitCron() {
