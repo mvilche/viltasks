@@ -50,16 +50,25 @@ func (c Task) Status() revel.Result {
 
 func (c Task) CreateTask() revel.Result {
 
-	//var t models.CronTask
-	command := c.Params.Query.Get("command")
-	name := c.Params.Query.Get("name")
-	time := c.Params.Query.Get("time")
-	desc := c.Params.Query.Get("desc")
+	command := c.Params.Form.Get("command")
+	name := c.Params.Form.Get("name")
+	time := c.Params.Form.Get("time")
+	desc := c.Params.Form.Get("desc")
+	email := c.Params.Form.Get("email")
+	noti := c.Params.Form.Get("notificacion")
 
 	c.Validation.Required(name).Message("Nombre es requerido!")
 	c.Validation.Required(desc).Message("Descripcion es requerido!")
 	c.Validation.Required(command).Message("Comando es requerido!")
 	c.Validation.Required(time).Message("Tiempo es requerido!")
+
+	if revel.ToBool(noti) {
+
+		c.Validation.Required(email).Message("Email es requerido!")
+		c.Validation.Email(email).Message("Email no es valido!")
+
+	}
+
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
 		c.FlashParams()
@@ -71,6 +80,8 @@ func (c Task) CreateTask() revel.Result {
 	t.Name = name
 	t.Description = desc
 	t.Time = time
+	t.Notification = revel.ToBool(noti)
+	t.Notification_email = email
 
 	err := models.Addjob(t)
 	if err != nil {

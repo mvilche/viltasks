@@ -1,13 +1,11 @@
 package models
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/revel/config"
 	"github.com/revel/revel"
+	"os"
 )
 
 func OpenSQL() (*gorm.DB, error) {
@@ -22,7 +20,7 @@ func OpenSQL() (*gorm.DB, error) {
 
 	db, err := gorm.Open("sqlite3", url)
 	if err != nil {
-		fmt.Print("EROOORR")
+
 		return db, err
 	}
 	//defer db.Close()

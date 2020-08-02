@@ -21,6 +21,7 @@
       <th scope="row">Descripción</th>
       <th scope="row">Comando</th>
       <th scope="row">Tiempo</th>
+      <th scope="row">Notificar ejecución</th>
       <th scope="row">Eliminar</th>
     </tr>
   </thead>
@@ -33,8 +34,29 @@
       <td>{{$element.Description}}</td>
       <td>{{$element.Command}}</td>
       <td>{{$element.Time}}</td>
-      <td><button type="submit" class="btn btn-danger btn-sm">x</button></td>
+      <td>{{$element.Notification_email}}</td>
+      <td><button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-danger btn-sm">x</button></td>
     </tr>
+    <div class="modal" id="myModal">
+      <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmar cambios</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>¿Está seguro de eliminar la tarea seleccionada?</p>
+            <p>La acción eliminará completamente la tarea del sistema</p>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
     {{end}}
   </tbody>

@@ -3,7 +3,7 @@
 
 <div class="jumbotron">
   <div class="container">
-  <form action=/task/createTask method="GET">
+  <form action=/task/createTask method="POST">
     <fieldset>
       <legend>Nueva Tarea</legend>
       <div class="form-group col-sm-6">
@@ -25,7 +25,23 @@
         <input type="text" name="time" class="form-control" id="time" aria-describedby="timeHelp" placeholder="*/15 * * * *">
         <small id="timeHelp" class="form-text text-muted">Ejemplo de ejecución cada 15 minutos: */15 * * * * </small>
       </div>
-      
+      <div class="form-group col-sm-6">
+          <label class="form-check-label">
+            <input class="form-check-input" id="noti_id" type="checkbox" name="notificacion" value="true">
+            Notificar ejecución por correo electrónico
+          </label>
+        </div>
+        <div id="email_id" class="form-group col-sm-6" style="display:none">
+          <label for="name">Correo electrónico</label>
+          <input type="text" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="mail@mail.com">
+          <small id="emailHelp" class="form-text text-muted">Dirección de correo donde se enviarán las notificaciones </small>
+        </div>
+        <script type="text/javascript">
+          $('#noti_id').change(function() {
+              $('#email_id').toggle();
+          });
+          </script>
+        
       <button type="submit" class="btn btn-primary">Guardar</button>
       <br>
       <br>

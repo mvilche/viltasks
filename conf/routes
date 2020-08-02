@@ -8,14 +8,11 @@ module:testrunner
 
 
 GET     /                                       App.Index
-GET     /alta                                   App.Alta
-GET     /stop                                   App.Stop
-GET     /start                                  App.Start
 ####task route
 GET     /task/list                              Task.List
 GET     /task/status                              Task.Status
 GET     /task/create                              Task.Create
-GET     /task/createTask                         Task.CreateTask
+POST     /task/createTask                         Task.CreateTask
 GET     /task/delete                         Task.Delete
 GET     /task/clean                         Task.Clean
 GET     /task/cleansuccess                         Task.Cleansuccess
