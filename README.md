@@ -34,13 +34,14 @@ Crons con ejecuciones fallidas: http://localhost:9000/api/failed
 
 Configure en conf/app.conf
 
+```shell
 [email]
 mail.host = smtp.gmail.com
 mail.port = 587
 mail.user = user@mail.com
 mail.password = 12345
 mail.disable.tls = false
-
+```
 
 ### Configurar base de datos
 
@@ -48,6 +49,7 @@ Configure en conf/app.conf
 
 Por defecto los datos se persisten en database/viltasks.db
 
+```shell
 [database]
 database.url = database/viltask.db
-
+```
