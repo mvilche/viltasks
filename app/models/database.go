@@ -1,16 +1,16 @@
 package models
 
 import (
+	"fmt"
 	"os"
 
-	"github.com/Kamva/mgm"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/revel/config"
 	"github.com/revel/revel"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func ConnectDB() {
-	// Setup mgm default config
+func OpenSQL() (*gorm.DB, error) {
 
 	c, err := config.ReadDefault("./conf/app.conf")
 	if err != nil {
@@ -18,25 +18,20 @@ func ConnectDB() {
 		os.Exit(1)
 	}
 
-	var host, _ = c.String("database", "database.host")
-	var port, _ = c.String("database", "database.port")
-	var user, _ = c.String("database", "database.username")
-	var name, _ = c.String("database", "database.name")
-	var pass, _ = c.String("database", "database.password")
+	var url, _ = c.String("database", "database.url")
 
-	if pass == "" || user == "" {
-
-		err2 := mgm.SetDefaultConfig(nil, name, options.Client().ApplyURI("mongodb://"+host+":"+port+""))
-		if err2 != nil {
-			revel.AppLog.Fatal("Database error", err2)
-		}
-	} else {
-
-		err2 := mgm.SetDefaultConfig(nil, name, options.Client().ApplyURI("mongodb://"+user+":"+pass+"@"+host+":"+port+""))
-		if err2 != nil {
-			revel.AppLog.Fatal("Database error", err2)
-		}
-
+	db, err := gorm.Open("sqlite3", url)
+	if err != nil {
+		fmt.Print("EROOORR")
+		return db, err
 	}
+	//defer db.Close()
+
+	return db, err
+}
+
+func CloseSQL(db *gorm.DB) {
+
+	db.Close()
 
 }

@@ -8,20 +8,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Kamva/mgm"
+	"github.com/jinzhu/gorm"
 	"github.com/revel/revel"
-	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/robfig/cron.v2"
 )
 
 type CronTask struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
-	mgm.DefaultModel `bson:",inline"`
-	Name             string `json:"name" bson:"name"`
-	Description      string `json:"description" bson:"description"`
-	Command          string `json:"command" bson:"command"`
-	Time             string `json:"time" bson:"time"`
-	CronId           string `json:"cronid" bson:"cronid"`
+	gorm.Model
+	Name        string `gorm:"size:255"`
+	Description string `gorm:"size:255"`
+	Command     string `gorm:"size:255"`
+	Time        string `gorm:"size:255"`
+	CronId      string `gorm:"size:255"`
 }
 
 func NewCronTask(t CronTask) *CronTask {
@@ -36,11 +35,11 @@ func NewCronTask(t CronTask) *CronTask {
 
 type FailedCronTask struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
-	mgm.DefaultModel `bson:",inline"`
-	Name             string `json:"name" bson:"name"`
-	Output           string `json:"output" bson:"output"`
-	CronId           string `json:"cronid" bson:"cronid"`
-	Date             string `json:"date" bson:"date"`
+	gorm.Model
+	Name   string `gorm:"size:255"`
+	Output string `gorm:"size:255"`
+	CronId string `gorm:"size:255"`
+	Date   string `gorm:"size:255"`
 }
 
 func NewFailedCronTask(t FailedCronTask) *FailedCronTask {
@@ -54,9 +53,9 @@ func NewFailedCronTask(t FailedCronTask) *FailedCronTask {
 
 type SuccessCronTask struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
-	mgm.DefaultModel `bson:",inline"`
-	Name             string `json:"name" bson:"name"`
-	Date             string `json:"date" bson:"date"`
+	gorm.Model
+	Name string `gorm:"size:255"`
+	Date string `gorm:"size:255"`
 }
 
 func NewSuccessCronTask(t SuccessCronTask) *SuccessCronTask {
@@ -68,8 +67,8 @@ func NewSuccessCronTask(t SuccessCronTask) *SuccessCronTask {
 
 type CronTaskConfig struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
-	mgm.DefaultModel `bson:",inline"`
-	Name             string `json:"name" bson:"name"`
+	gorm.Model
+	Name string `gorm:"size:255"`
 }
 
 func NewCronTaskConfig(t CronTaskConfig) *CronTaskConfig {
@@ -86,7 +85,9 @@ func GetCron() *cron.Cron {
 	once.Do(func() {
 		instance = cron.New()
 		revel.AppLog.Debug("Init Cron")
-		mgm.Coll(&CronTaskConfig{}).Drop(mgm.Ctx())
+		db, _ := OpenSQL()
+		db.Exec("delete from cron_task_configs")
+		CloseSQL(db)
 	})
 	return instance
 }
@@ -97,32 +98,33 @@ func StartCron() error {
 	var tc CronTaskConfig
 	tc.Name = "CronStarted"
 	tconfig := NewCronTaskConfig(tc)
-
-	err := mgm.Coll(tconfig).First(bson.M{"name": tc.Name}, tconfig)
-	if err == nil {
+	db, _ := OpenSQL()
+	if err := db.Where("name = ?", tc.Name).First(&tconfig).Error; err == nil {
 		gerr = errors.New("Cron ya fue iniciado")
 		revel.AppLog.Error(gerr.Error())
 		return gerr
+
 	}
 
-	result := []CronTask{}
-	mgm.Coll(&CronTask{}).SimpleFind(&result, bson.D{{}})
-	n := len(result)
+	var r []CronTask
+	db.Find(&r)
+	n := len(r)
 	if n > 0 {
-		mgm.Coll(&CronTask{}).Drop(mgm.Ctx())
-		for _, b := range result {
+		db.Exec("delete from cron_tasks")
+
+		for _, b := range r {
 			Addjob(b)
 		}
 
 	}
 	revel.AppLog.Infof("Iniciando sistema con " + strconv.FormatInt(int64(n), 10) + " tasks")
 	c.Start()
-	mgm.Coll(&CronTaskConfig{}).Drop(mgm.Ctx())
-	errr := mgm.Coll(tconfig).Create(tconfig)
-	if errr != nil {
+	db.Exec("delete from cron_task_configs")
+	if err := db.Create(&tconfig).Error; err != nil {
 		revel.AppLog.Error("Error al insertar config")
 	}
 
+	CloseSQL(db)
 	return gerr
 }
 
@@ -133,9 +135,9 @@ func StopCron() error {
 	var gerr error
 	tc.Name = "CronStopped"
 	tconfig := NewCronTaskConfig(tc)
+	db, _ := OpenSQL()
 
-	err := mgm.Coll(tconfig).First(bson.M{"name": tc.Name}, tconfig)
-	if err == nil {
+	if err := db.Where("name = ?", tc.Name).First(&tconfig).Error; err == nil {
 		gerr = errors.New("Cron ya se encuentra detenido")
 		revel.AppLog.Error(gerr.Error())
 		return gerr
@@ -152,9 +154,12 @@ func StopCron() error {
 		}
 	}
 	c.Stop()
-	mgm.Coll(&CronTaskConfig{}).Drop(mgm.Ctx())
+	db.Exec("delete from cron_task_configs")
 	tc.Name = "CronStopped"
-	mgm.Coll(tconfig).Create(&tc)
+	if err := db.Create(&tconfig).Error; err != nil {
+		revel.AppLog.Error("Error al insertar config")
+	}
+	CloseSQL(db)
 	return gerr
 }
 
@@ -162,10 +167,9 @@ func Addjob(t CronTask) error {
 
 	c := GetCron()
 	var gerror error
-
+	db, _ := OpenSQL()
 	task := NewCronTask(t)
-	err := mgm.Coll(task).First(bson.M{"name": t.Name}, task)
-	if err == nil {
+	if err := db.Where("name = ?", t.Name).First(&task).Error; err == nil {
 		gerror = errors.New("Ya existe un cron con el nombre ingresado")
 		revel.AppLog.Error(gerror.Error())
 		return gerror
@@ -186,8 +190,7 @@ func Addjob(t CronTask) error {
 			f.Date = time.Now().Format("2006-01-02 15:04:05")
 			failed := NewFailedCronTask(f)
 
-			err := mgm.Coll(failed).Create(failed)
-			if err != nil {
+			if err := db.Create(&failed).Error; err != nil {
 				revel.AppLog.Error(err.Error())
 
 			}
@@ -198,19 +201,17 @@ func Addjob(t CronTask) error {
 			sTask.Date = time.Now().Format("2006-01-02 15:04:05")
 			succes := NewSuccessCronTask(sTask)
 
-			find := mgm.Coll(succes).First(bson.M{"name": succes.Name}, succes)
-			if find != nil {
+			if err := db.Where("name = ?", succes.Name).First(&succes).Error; err != nil {
 
-				err2 := mgm.Coll(succes).Create(succes)
-				if err2 != nil {
+				if err := db.Create(&succes).Error; err != nil {
 					revel.AppLog.Error(err.Error())
-				}
 
+				}
 			} else {
 				succes.Date = time.Now().Format("2006-01-02 15:04:05")
-				err := mgm.Coll(succes).Update(succes)
-				if err != nil {
+				if err := db.Save(&succes).Error; err != nil {
 					revel.AppLog.Error(err.Error())
+
 				}
 			}
 
@@ -229,11 +230,11 @@ func Addjob(t CronTask) error {
 	}
 
 	task.CronId = strconv.FormatInt(int64(id), 10)
-	err2 := mgm.Coll(task).Create(task)
-	if err2 != nil {
+	if err := db.Create(&task).Error; err != nil {
 		revel.AppLog.Error(err.Error())
+
 	} else {
-		revel.AppLog.Debug("Cron cargado en mongo")
+		revel.AppLog.Debug("Cron cargado en database")
 	}
 
 	return gerror
@@ -242,33 +243,42 @@ func Addjob(t CronTask) error {
 
 func ListJob() []CronTask {
 
-	result := []CronTask{}
-	mgm.Coll(&CronTask{}).SimpleFind(&result, bson.D{{}})
+	var result []CronTask
+	db, _ := OpenSQL()
+	db.Find(&result)
+	db.Close()
 	return result
 }
 
 func SuccesJob() []SuccessCronTask {
 
-	result := []SuccessCronTask{}
-	mgm.Coll(&SuccessCronTask{}).SimpleFind(&result, bson.D{{}})
+	var result []SuccessCronTask
+	db, _ := OpenSQL()
+	db.Find(&result)
+	db.Close()
 	return result
 }
 
 func ListFailedJob() []FailedCronTask {
 
-	result := []FailedCronTask{}
-	mgm.Coll(&FailedCronTask{}).SimpleFind(&result, bson.D{{}})
+	var result []FailedCronTask
+	db, _ := OpenSQL()
+	db.Find(&result)
+	db.Close()
 	return result
 }
 
 func Remove(id cron.EntryID) {
 	c := GetCron()
+	db, _ := OpenSQL()
 	e := c.Entry(id)
 	if e.Valid() {
 		c.Remove(id)
-		t := &CronTask{}
-		mgm.Coll(t).DeleteOne(mgm.Ctx(), bson.M{"cronid": strconv.FormatInt(int64(id), 10)})
-		revel.AppLog.Info("Cron eliminado")
+		if err := db.Where("cron_id = ?", strconv.FormatInt(int64(id), 10)).Delete(CronTask{}).Error; err != nil {
+			revel.AppLog.Info("Error al eliminar el cron", err.Error)
+		} else {
+			revel.AppLog.Info("Cron eliminado")
+		}
 	} else {
 
 		revel.AppLog.Info("No se encontro cron para el id dado")
@@ -276,13 +286,28 @@ func Remove(id cron.EntryID) {
 }
 
 func CleanFailedJobs() error {
+	db, _ := OpenSQL()
+	if err := db.Exec("delete from failed_cron_tasks").Error; err != nil {
 
-	return mgm.Coll(&FailedCronTask{}).Drop(mgm.Ctx())
+		db.Close()
+		return err
+	}
+	db.Close()
+
+	return nil
 }
 
 func CleanSuccessdJobs() error {
 
-	return mgm.Coll(&SuccessCronTask{}).Drop(mgm.Ctx())
+	db, _ := OpenSQL()
+	if err := db.Exec("delete from success_cron_tasks").Error; err != nil {
+
+		db.Close()
+		return err
+	}
+	db.Close()
+
+	return nil
 }
 
 func Entry() {

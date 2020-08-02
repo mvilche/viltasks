@@ -20,6 +20,10 @@ GET     /task/delete                         Task.Delete
 GET     /task/clean                         Task.Clean
 GET     /task/cleansuccess                         Task.Cleansuccess
 GET     /task/sintaxis                         Task.Sintaxis
+GET     /api                         Api.Index
+GET     /api/failed                         Api.ListFailed
+GET     /api/success                         Api.ListSuccess
+
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

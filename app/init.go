@@ -37,7 +37,7 @@ func init() {
 	// ( order dependent )
 	// revel.OnAppStart(ExampleStartupScript)
 	// revel.OnAppStart(InitDB)
-	revel.OnAppStart(models.ConnectDB)
+	revel.OnAppStart(InitMigrations)
 	revel.OnAppStart(InitCron)
 }
 
@@ -60,6 +60,35 @@ var HeaderFilter = func(c *revel.Controller, fc []revel.Filter) {
 //		// Dev mode
 //	}
 //}
+
+func InitMigrations() {
+
+	db, err := models.OpenSQL()
+
+	if err == nil {
+
+		revel.AppLog.Info("Start database migrations")
+
+		//list models
+		if err := db.AutoMigrate(&models.CronTask{}, &models.CronTaskConfig{}, &models.FailedCronTask{}, &models.SuccessCronTask{}).Error; err != nil {
+			revel.AppLog.Error("Database migrations fail")
+			models.CloseSQL(db)
+
+		} else {
+			//db.Model(&models.User{}).AddForeignKey("rol_id", "rols(id)", "RESTRICT", "RESTRICT")
+			//db.Model(&models.Ticket{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
+			//	db.Model(&models.Ticket{}).AddForeignKey("status_id", "statuses(id)", "RESTRICT", "RESTRICT")
+			//db.Model(&models.Group{}).AddForeignKey("user", "users(group_refer)", "RESTRICT", "RESTRICT")
+			//	db.Model(&models.Group{}).AddForeignKey("group_id", "users(group_id)", "CASCADE", "CASCADE")
+			//// INSERT INTO "users" (name) VALUES ("non_existing");
+			//// user -> User{Id: 112, Name: "non_existing"}
+			revel.AppLog.Info("Dat6abase migration finish")
+		}
+
+	}
+	models.CloseSQL(db)
+}
+
 func InitCron() {
 
 	err := models.StartCron()
