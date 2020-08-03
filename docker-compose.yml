@@ -3,10 +3,5 @@ version: "3"
 services:
   viltasks:
     image: mvilche/viltasks
-    volumes:
-      - data:/app/database
     ports:
       - "9000:9000"
-
-volumes:
-  data:
