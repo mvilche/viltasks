@@ -2,9 +2,6 @@ version: "3"
 
 services:
   viltasks:
-    build:
-     dockerfile: Dockerfile
-     context: .
     image: mvilche/viltasks
     volumes:
       - data:/app/database

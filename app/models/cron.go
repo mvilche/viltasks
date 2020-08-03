@@ -2,16 +2,21 @@ package models
 
 import (
 	"errors"
-	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/revel/revel"
-	"gopkg.in/robfig/cron.v2"
+	"github.com/robfig/cron"
 )
+
+type Tz struct {
+	Name string
+}
 
 type CronTask struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
@@ -23,6 +28,7 @@ type CronTask struct {
 	CronId             string `gorm:"size:255"`
 	Notification       bool
 	Notification_email string `gorm:"size:255"`
+	Timezone           string `gorm:"size:255"`
 }
 
 func NewCronTask(t CronTask) *CronTask {
@@ -34,6 +40,7 @@ func NewCronTask(t CronTask) *CronTask {
 		CronId:             t.CronId,
 		Notification:       t.Notification,
 		Notification_email: t.Notification_email,
+		Timezone:           t.Timezone,
 	}
 }
 
@@ -170,6 +177,7 @@ func StopCron() error {
 func Addjob(t CronTask) error {
 
 	c := GetCron()
+
 	var gerror error
 	db, _ := OpenSQL()
 	task := NewCronTask(t)
@@ -179,7 +187,7 @@ func Addjob(t CronTask) error {
 		return gerror
 	}
 
-	id, _ := c.AddFunc(t.Time, func() {
+	id, _ := c.AddFunc("CRON_TZ="+t.Timezone+" "+t.Time, func() {
 
 		out, err := exec.Command("/bin/sh", "-c", t.Command).Output()
 
@@ -293,6 +301,31 @@ func ListFailedJob() []FailedCronTask {
 	return result
 }
 
+func ShowTZ() []Tz {
+
+	var tlist []Tz
+	files, err := ioutil.ReadDir("/usr/share/zoneinfo/")
+	if err != nil {
+
+	}
+
+	for _, f := range files {
+		files2, err2 := ioutil.ReadDir("/usr/share/zoneinfo/" + f.Name())
+		if err2 == nil {
+			for _, f2 := range files2 {
+				var t Tz
+				sname := strings.TrimSpace(f.Name() + "/" + f2.Name())
+				t.Name = sname
+				tlist = append(tlist, t)
+			}
+
+		}
+
+	}
+
+	return tlist
+}
+
 func Remove(id cron.EntryID) {
 	c := GetCron()
 	db, _ := OpenSQL()
@@ -333,10 +366,4 @@ func CleanSuccessdJobs() error {
 	db.Close()
 
 	return nil
-}
-
-func Entry() {
-
-	c := GetCron()
-	fmt.Println(c.Entries())
 }

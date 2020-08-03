@@ -21,6 +21,7 @@
       <th scope="row">Descripción</th>
       <th scope="row">Comando</th>
       <th scope="row">Tiempo</th>
+      <th scope="row">Zona horaria</th>
       <th scope="row">Notificar ejecución</th>
       <th scope="row">Eliminar</th>
     </tr>
@@ -34,7 +35,13 @@
       <td>{{$element.Description}}</td>
       <td>{{$element.Command}}</td>
       <td>{{$element.Time}}</td>
+      <td>{{$element.Timezone}}</td>
+      {{ if not $element.Notification_email }}
+      <td>Desactivado</td>
+      {{else}}
       <td>{{$element.Notification_email}}</td>
+      {{end}}
+      
       <td><button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-danger btn-sm">x</button></td>
     </tr>
     <div class="modal" id="myModal">

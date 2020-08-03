@@ -5,7 +5,7 @@ import (
 	"viltasks/app/models"
 
 	"github.com/revel/revel"
-	"gopkg.in/robfig/cron.v2"
+	"github.com/robfig/cron"
 )
 
 type Task struct {
@@ -56,6 +56,7 @@ func (c Task) CreateTask() revel.Result {
 	desc := c.Params.Form.Get("desc")
 	email := c.Params.Form.Get("email")
 	noti := c.Params.Form.Get("notificacion")
+	tz := c.Params.Form.Get("timezone")
 
 	c.Validation.Required(name).Message("Nombre es requerido!")
 	c.Validation.Required(desc).Message("Descripcion es requerido!")
@@ -82,6 +83,7 @@ func (c Task) CreateTask() revel.Result {
 	t.Time = time
 	t.Notification = revel.ToBool(noti)
 	t.Notification_email = email
+	t.Timezone = tz
 
 	err := models.Addjob(t)
 	if err != nil {
@@ -95,7 +97,13 @@ func (c Task) CreateTask() revel.Result {
 }
 
 func (c Task) Create() revel.Result {
-	return c.Render()
+	tz := models.ShowTZ()
+	if len(tz) < 0 {
+
+		revel.AppLog.Error("Error al obtener timezone del sistema operativo")
+	}
+
+	return c.Render(tz)
 }
 
 func (c Task) Clean() revel.Result {
