@@ -115,3 +115,12 @@ func (c Task) Cleansuccess() revel.Result {
 	models.CleanSuccessdJobs()
 	return c.Redirect(Task.Status)
 }
+
+func (c Task) Check() revel.Result {
+
+	if c.Session["user"] != "L53PoWkpXMS3c2IUtGjHGQ" {
+		return c.Redirect(Auth.Index)
+	}
+
+	return nil
+}

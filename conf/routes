@@ -20,6 +20,8 @@ GET     /task/sintaxis                         Task.Sintaxis
 GET     /api                         Api.Index
 GET     /api/failed                         Api.ListFailed
 GET     /api/success                         Api.ListSuccess
+GET     /auth                         Auth.Index
+GET     /auth/logout                         Auth.Logout
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

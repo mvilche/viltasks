@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"viltasks/app/models"
-
 	"github.com/revel/revel"
 )
 
@@ -11,19 +9,25 @@ type App struct {
 }
 
 func (c App) Index() revel.Result {
+
 	return c.Render()
 }
 
-func (c App) Alta() revel.Result {
+func (c App) Check() revel.Result {
 
-	var task models.CronTask
+	if c.Session["user"] != "L53PoWkpXMS3c2IUtGjHGQ" {
+		return c.Redirect(Auth.Index)
+	}
 
-	task.Name = "martin"
-	task.Time = "*/1 * * * *"
-	task.Command = "curl -v --fail http://googlegol.com.uy"
-	models.Addjob(task)
-	return c.Render()
+	return nil
 }
+
+func init() {
+	revel.InterceptMethod(App.Check, revel.BEFORE)
+	revel.InterceptMethod(Task.Check, revel.BEFORE)
+}
+
+/*
 
 func (c App) Stop() revel.Result {
 	models.StopCron()
@@ -34,3 +38,4 @@ func (c App) Start() revel.Result {
 	models.StartCron()
 	return c.Render()
 }
+*/

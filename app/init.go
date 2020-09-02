@@ -71,7 +71,7 @@ func InitMigrations() {
 		revel.AppLog.Info("Start database migrations")
 
 		//list models
-		if err := db.AutoMigrate(&models.CronTask{}, &models.CronTaskConfig{}, &models.FailedCronTask{}, &models.SuccessCronTask{}).Error; err != nil {
+		if err := db.AutoMigrate(&models.CronTask{}, &models.CronTaskConfig{}, &models.FailedCronTask{}, &models.SuccessCronTask{}, &models.User{}).Error; err != nil {
 			revel.AppLog.Error("Database migrations fail")
 			models.CloseSQL(db)
 
