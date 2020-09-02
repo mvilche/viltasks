@@ -52,4 +52,13 @@ Por defecto los datos se persisten en database/viltasks.db
 ```shell
 [database]
 database.url = database/viltask.db
+
+```
+
+### Configurar Autenticación login
+
+```shell
+[auth]
+auth.username = admin
+auth.password = admin123
 ```
