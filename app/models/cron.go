@@ -186,12 +186,14 @@ func Addjob(t CronTask) error {
 
 	id, _ := c.AddFunc("CRON_TZ="+t.Timezone+" "+t.Time, func() {
 
-		out, err := exec.Command("/bin/sh", "-c", t.Command).Output()
+		cmd := exec.Command("/bin/sh", "-c", t.Command)
+
+		out, err := cmd.CombinedOutput()
 
 		if err != nil {
 			revel.AppLog.Error("Error ejecutando task")
 			revel.AppLog.Debug("Task: " + t.Name)
-			revel.AppLog.Error(err.Error())
+			revel.AppLog.Error(string(out) + " - " + err.Error())
 			var f FailedCronTask
 
 			f.Name = t.Name

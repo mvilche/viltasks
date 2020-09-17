@@ -13,7 +13,7 @@ GET     /task/list                              Task.List
 GET     /task/status                              Task.Status
 GET     /task/create                              Task.Create
 POST     /task/createTask                         Task.CreateTask
-GET     /task/delete                         Task.Delete
+POST     /task/delete                         Task.Delete
 GET     /task/clean                         Task.Clean
 GET     /task/cleansuccess                         Task.Cleansuccess
 GET     /task/sintaxis                         Task.Sintaxis

@@ -18,7 +18,7 @@ func (c Task) Index() revel.Result {
 
 func (c Task) Delete() revel.Result {
 
-	id := c.Params.Query.Get("id")
+	id := c.Params.Get("id")
 	i2, _ := strconv.Atoi(id)
 	i3 := cron.EntryID(i2)
 	models.Remove(i3)

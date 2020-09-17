@@ -68,23 +68,23 @@ func SendNewEmail(suc *SuccessCronTask, cron *CronTask, fcron *FailedCronTask, o
 func RenderHtml(cron *CronTask, success *SuccessCronTask, fcron *FailedCronTask, ok bool) (string, string, string, string) {
 
 	sOk := `<h3>Tarea ejecutada correctamente</h3>
-	<h2>Tarea: ` + cron.Name + `</h2>
-	<h4>Descripción: ` + cron.Description + `</h4>
-	<h4>Hora de ejecucación: ` + success.Date + `</h4>
-	<p>Acceda al sistema si desea realizar modificaciones en la tarea.</p>
+	<h2>Tarea: </h2><p>` + cron.Name + `</p>
+	<h4>Descripción: </h4><p>` + cron.Description + `</p>
+	<h4>Hora de ejecución: </h4><p>` + success.Date + `</p>
+	</br>---------------------------------------------------</br>
 	<p>viltasks</p>`
 
 	sError := `<h3>Tarea fallida!!!</h3>
-	<h2>Tarea: ` + fcron.Name + `</h2>
-	<h4>Descripción: ` + cron.Description + `</h4>
-	<h4>Hora de ejecucación: ` + fcron.Date + `</h4>
-	<h4>Problema: ` + fcron.Output + `</h4>
-	<p>Acceda al sistema si desea realizar modificaciones en la tarea.</p>
+	<h2>Tarea: </h2><p>` + fcron.Name + `</p>
+	<h4>Descripción: </h4><p>` + cron.Description + `</p>
+	<h4>Hora de ejecución: </h4><p>` + fcron.Date + `</p>
+	<h4>Problema: </h4><p>` + fcron.Output + `</p>
+	</br>---------------------------------------------------</br>
 	<p>viltasks</p>`
 
 	subjectOk := "Notificación de ejecución exitosa - Tarea: " + cron.Name + ""
 
-	subjectError := "Notificación de ejecucación fallida!! - Tarea: " + cron.Name + ""
+	subjectError := "Notificación de ejecución fallida!! - Tarea: " + cron.Name + ""
 
 	return sOk, sError, subjectOk, subjectError
 

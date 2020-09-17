@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"os"
 	"viltasks/app/models"
 
@@ -39,6 +38,7 @@ func init() {
 	// ( order dependent )
 	// revel.OnAppStart(ExampleStartupScript)
 	// revel.OnAppStart(InitDB)
+	revel.OnAppStart(ShowVersion)
 	revel.OnAppStart(InitMigrations)
 	//revel.OnAppStart(InitCron)
 }
@@ -62,6 +62,13 @@ var HeaderFilter = func(c *revel.Controller, fc []revel.Filter) {
 //		// Dev mode
 //	}
 //}
+
+func ShowVersion() {
+
+	revel.AppLog.Info("Autor: Martin Fabrizzio Vilche")
+	revel.AppLog.Info("Version: 2.1.0")
+
+}
 
 func InitMigrations() {
 	db, err := models.OpenSQL()
@@ -101,7 +108,6 @@ func InitCron() {
 
 	err := models.StartCron()
 	if err != nil {
-		fmt.Print("esesaeaeaseaeae")
 		revel.AppLog.Debug(err.Error())
 	}
 

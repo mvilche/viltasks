@@ -28,8 +28,7 @@
   </thead>
   <tbody>
     {{range $index, $element := .t}}
-    <form action="/task/delete" method="GET">
-    <input id="id" name="id" type="hidden" value="{{$element.CronId}}">
+    <form action="/task/delete" method="POST">
     <tr class="table-light">
       <td>{{$element.Name}}</td>
       <td>{{$element.Description}}</td>
@@ -42,7 +41,7 @@
       <td>{{$element.Notification_email}}</td>
       {{end}}
       
-      <td><button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-danger btn-sm">x</button></td>
+      <td><button type="button" data-toggle="modal" data-id="{{$element.CronId}}" data-target="#myModal" class="btn btn-danger btn-sm">x</button></td>
     </tr>
     <div class="modal" id="myModal">
       <div class="modal-dialog" role="dialog">
@@ -58,12 +57,21 @@
             <p>La acción eliminará completamente la tarea del sistema</p>
           </div>
           <div class="modal-footer">
+            <input id="{{$element.CronId}}" name="id" type="hidden" value="">
             <button type="submit" class="btn btn-danger">Eliminar</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           </div>
         </div>
       </div>
     </div>
+    <script>
+      $(document).ready(function() {
+  $('#myModal').on('show.bs.modal', function(e) {
+    var id = $(e.relatedTarget).data('id');
+    document.getElementById("{{$element.CronId}}").value = id;
+  });
+});
+    </script>
   </form>
     {{end}}
   </tbody>
