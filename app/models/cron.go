@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/revel/revel"
 	"github.com/robfig/cron"
+	"gorm.io/gorm"
 )
 
 type Tz struct {
@@ -98,7 +98,6 @@ func GetCron() *cron.Cron {
 		revel.AppLog.Debug("Init Cron")
 		db, _ := OpenSQL()
 		db.Exec("delete from cron_task_configs")
-		CloseSQL(db)
 	})
 	return instance
 }
@@ -135,7 +134,6 @@ func StartCron() error {
 		revel.AppLog.Error("Error al insertar config")
 	}
 
-	CloseSQL(db)
 	return gerr
 }
 
@@ -170,7 +168,6 @@ func StopCron() error {
 	if err := db.Create(&tconfig).Error; err != nil {
 		revel.AppLog.Error("Error al insertar config")
 	}
-	CloseSQL(db)
 	return gerr
 }
 
@@ -279,7 +276,6 @@ func ListJob() []CronTask {
 	var result []CronTask
 	db, _ := OpenSQL()
 	db.Find(&result)
-	db.Close()
 	return result
 }
 
@@ -288,7 +284,6 @@ func SuccesJob() []SuccessCronTask {
 	var result []SuccessCronTask
 	db, _ := OpenSQL()
 	db.Find(&result)
-	db.Close()
 	return result
 }
 
@@ -297,7 +292,6 @@ func ListFailedJob() []FailedCronTask {
 	var result []FailedCronTask
 	db, _ := OpenSQL()
 	db.Find(&result)
-	db.Close()
 	return result
 }
 
@@ -347,10 +341,8 @@ func CleanFailedJobs() error {
 	db, _ := OpenSQL()
 	if err := db.Exec("delete from failed_cron_tasks").Error; err != nil {
 
-		db.Close()
 		return err
 	}
-	db.Close()
 
 	return nil
 }
@@ -360,10 +352,8 @@ func CleanSuccessdJobs() error {
 	db, _ := OpenSQL()
 	if err := db.Exec("delete from success_cron_tasks").Error; err != nil {
 
-		db.Close()
 		return err
 	}
-	db.Close()
 
 	return nil
 }

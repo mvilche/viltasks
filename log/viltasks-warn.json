@@ -1,0 +1,2 @@
+{"caller":"server.go:88","error":"http: Server closed","lvl":"WARN","module":"revel","msg":"Server exiting:","section":"server","t":"2020-09-02T16:56:49.120599909-03:00"}
+{"caller":"server.go:88","error":"http: Server closed","lvl":"WARN","module":"revel","msg":"Server exiting:","section":"server","t":"2020-09-02T17:10:26.468170378-03:00"}

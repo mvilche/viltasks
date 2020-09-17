@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"os"
 	"viltasks/app/models"
 
@@ -63,17 +64,18 @@ var HeaderFilter = func(c *revel.Controller, fc []revel.Filter) {
 //}
 
 func InitMigrations() {
-
 	db, err := models.OpenSQL()
-
 	if err == nil {
 
 		revel.AppLog.Info("Start database migrations")
 
 		//list models
-		if err := db.AutoMigrate(&models.CronTask{}, &models.CronTaskConfig{}, &models.FailedCronTask{}, &models.SuccessCronTask{}, &models.User{}).Error; err != nil {
-			revel.AppLog.Error("Database migrations fail")
-			models.CloseSQL(db)
+
+		err := db.AutoMigrate(&models.CronTask{}, &models.CronTaskConfig{}, &models.FailedCronTask{}, &models.SuccessCronTask{}, &models.User{})
+
+		if err != nil {
+
+			revel.AppLog.Error("Database migrations fail\n" + err.Error())
 
 		} else {
 			//db.Model(&models.User{}).AddForeignKey("rol_id", "rols(id)", "RESTRICT", "RESTRICT")
@@ -91,7 +93,6 @@ func InitMigrations() {
 		revel.AppLog.Error("Erro open database ", err.Error)
 		os.Exit(1)
 	}
-	models.CloseSQL(db)
 
 	InitCron()
 }
@@ -100,6 +101,7 @@ func InitCron() {
 
 	err := models.StartCron()
 	if err != nil {
+		fmt.Print("esesaeaeaseaeae")
 		revel.AppLog.Debug(err.Error())
 	}
 

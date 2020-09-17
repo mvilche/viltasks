@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"viltasks/app/models"
+	"viltasks/app/routes"
 
 	"github.com/revel/revel"
 )
@@ -53,6 +54,8 @@ func (c Auth) Index() revel.Result {
 }
 
 func (c Auth) Logout() revel.Result {
-	revel.NewSessionCookieEngine()
-	return c.Redirect(Auth.Index)
+	for k := range c.Session {
+		delete(c.Session, k)
+	}
+	return c.Redirect(routes.Auth.Index())
 }

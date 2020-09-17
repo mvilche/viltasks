@@ -1,11 +1,13 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"os"
+
 	"github.com/revel/config"
 	"github.com/revel/revel"
-	"os"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func OpenSQL() (*gorm.DB, error) {
@@ -18,18 +20,16 @@ func OpenSQL() (*gorm.DB, error) {
 
 	var url, _ = c.String("database", "database.url")
 
-	db, err := gorm.Open("sqlite3", url)
+	// github.com/mattn/go-sqlite3
+	db, err := gorm.Open(sqlite.Open(url), &gorm.Config{
+
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+
 	if err != nil {
 
 		return db, err
 	}
 	//defer db.Close()
-
 	return db, err
-}
-
-func CloseSQL(db *gorm.DB) {
-
-	db.Close()
-
 }

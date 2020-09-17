@@ -1,0 +1,12 @@
+[Unit]
+Description=Viltasks
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/viltasks
+ExecStart=/bin/bash /opt/viltasks/run.sh
+StartLimitBurst=0
+
+[Install]
+WantedBy=multi-user.target
+
