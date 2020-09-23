@@ -14,15 +14,16 @@
 </form>
 <br>
 <br>
-<table class="table table-hover">
-  <thead>
-    <tr class="table-dark">
+<table class="table table-striped">
+  <thead class="thead-dark">
+    <tr>
       <th scope="row">Nombre</th>
       <th scope="row">Descripción</th>
       <th scope="row">Comando</th>
       <th scope="row">Tiempo</th>
       <th scope="row">Zona horaria</th>
       <th scope="row">Notificar ejecución</th>
+      <th scope="row">Tipo de notificación</th>
       <th scope="row">Eliminar</th>
     </tr>
   </thead>
@@ -30,16 +31,24 @@
     {{range $index, $element := .t}}
     <form action="/task/delete" method="POST">
     <tr class="table-light">
-      <td>{{$element.Name}}</td>
-      <td>{{$element.Description}}</td>
-      <td>{{$element.Command}}</td>
-      <td>{{$element.Time}}</td>
+      <td><strong style="text-transform: capitalize;">{{$element.Name}}</strong></td>
+      <td><p class="customStyle" style="text-transform: capitalize;">{{$element.Description}}</p></td>
+      <td onmouseover="document.getElementById('{{$element.Name}}').innerHTML='{{$element.Command}}'" onmouseout="document.getElementById('{{$element.Name}}').innerHTML='*******'">
+      <p class="customStyle" id={{$element.Name}}>*****</p></td>
+      <td><p style="width: 100px;">{{$element.Time}}</p></td>
       <td>{{$element.Timezone}}</td>
       {{ if not $element.Notification_email }}
       <td>Desactivado</td>
+      <td>Desactivado</td>
       {{else}}
       <td>{{$element.Notification_email}}</td>
+      {{ if not $element.Notification_failed }}
+      <td>Solo errores</td>
+      {{else}}
+      <td>Todas</td>
       {{end}}
+      {{end}}
+
       
       <td><button type="button" data-toggle="modal" data-id="{{$element.CronId}}" data-target="#myModal" class="btn btn-danger btn-sm">x</button></td>
     </tr>

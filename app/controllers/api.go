@@ -27,3 +27,17 @@ func (c Api) ListSuccess() revel.Result {
 	c.Response.Out.Header().Add("Access-Control-Allow-Origin", "*")
 	return c.RenderJSON(p)
 }
+
+func (c Api) Check() revel.Result {
+
+	if c.Session["user"] != "L53PoWkpXMS3c2IUtGjHGQ" {
+		return c.Redirect(Auth.Index)
+	}
+
+	return nil
+}
+
+func init() {
+	revel.InterceptMethod(Api.Check, revel.BEFORE)
+	revel.InterceptMethod(Task.Check, revel.BEFORE)
+}

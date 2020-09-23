@@ -45,6 +45,8 @@
           <label for="name">Correo electrónico</label>
           <input type="text" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="mail@mail.com">
           <small id="emailHelp" class="form-text text-muted">Dirección de correo donde se enviarán las notificaciones </small>
+          <input class="form-check-input" id="notiFailed_id" type="checkbox" name="notificacion_failed" value="true">
+          <p>Notificar solo en caso de error</p>
         </div>
         <script type="text/javascript">
           $('#noti_id').change(function() {

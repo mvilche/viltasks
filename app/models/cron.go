@@ -21,26 +21,28 @@ type Tz struct {
 type CronTask struct {
 	// DefaultModel add _id,created_at and updated_at fields to the Model
 	gorm.Model
-	Name               string `gorm:"size:255"`
-	Description        string `gorm:"size:255"`
-	Command            string `gorm:"size:255"`
-	Time               string `gorm:"size:255"`
-	CronId             string `gorm:"size:255"`
-	Notification       bool
-	Notification_email string `gorm:"size:255"`
-	Timezone           string `gorm:"size:255"`
+	Name                string `gorm:"size:255"`
+	Description         string `gorm:"size:255"`
+	Command             string `gorm:"size:255"`
+	Time                string `gorm:"size:255"`
+	CronId              string `gorm:"size:255"`
+	Notification        bool
+	Notification_failed bool
+	Notification_email  string `gorm:"size:255"`
+	Timezone            string `gorm:"size:255"`
 }
 
 func NewCronTask(t CronTask) *CronTask {
 	return &CronTask{
-		Name:               t.Name,
-		Description:        t.Description,
-		Command:            t.Command,
-		Time:               t.Time,
-		CronId:             t.CronId,
-		Notification:       t.Notification,
-		Notification_email: t.Notification_email,
-		Timezone:           t.Timezone,
+		Name:                t.Name,
+		Description:         t.Description,
+		Command:             t.Command,
+		Time:                t.Time,
+		CronId:              t.CronId,
+		Notification:        t.Notification,
+		Notification_email:  t.Notification_email,
+		Notification_failed: t.Notification_failed,
+		Timezone:            t.Timezone,
 	}
 }
 
@@ -209,7 +211,6 @@ func Addjob(t CronTask) error {
 			if err := db.Where("name = ? AND notification = ?", task.Name, true).First(&task).Error; err == nil {
 
 				revel.AppLog.Debug("Se encontro activado notificaciones")
-
 				err2 := SendNewEmail(&SuccessCronTask{}, task, failed, false)
 				if err2 != nil {
 					revel.AppLog.Error(err2.Error())
@@ -237,7 +238,7 @@ func Addjob(t CronTask) error {
 				}
 			}
 
-			if err := db.Where("name = ? AND notification = ?", task.Name, true).First(&task).Error; err == nil {
+			if err := db.Where("name = ? AND notification = ? AND notification_failed = false", task.Name, true).First(&task).Error; err == nil {
 
 				revel.AppLog.Debug("Se encontro activado notificaciones")
 
@@ -258,7 +259,7 @@ func Addjob(t CronTask) error {
 		c.Remove(id)
 		return gerror
 	} else {
-		revel.AppLog.Info("Cron agregado valido")
+		revel.AppLog.Debug("Cron agregado valido")
 	}
 
 	task.CronId = strconv.FormatInt(int64(id), 10)

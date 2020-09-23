@@ -56,6 +56,7 @@ func (c Task) CreateTask() revel.Result {
 	desc := c.Params.Form.Get("desc")
 	email := c.Params.Form.Get("email")
 	noti := c.Params.Form.Get("notificacion")
+	notiF := c.Params.Form.Get("notificacion_failed")
 	tz := c.Params.Form.Get("timezone")
 
 	c.Validation.Required(name).Message("Nombre es requerido!")
@@ -82,6 +83,7 @@ func (c Task) CreateTask() revel.Result {
 	t.Description = desc
 	t.Time = time
 	t.Notification = revel.ToBool(noti)
+	t.Notification_failed = revel.ToBool(notiF)
 	t.Notification_email = email
 	t.Timezone = tz
 
