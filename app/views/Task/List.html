@@ -42,7 +42,7 @@
       <td>Desactivado</td>
       {{else}}
       <td>{{$element.Notification_email}}</td>
-      {{ if not $element.Notification_failed }}
+      {{ if $element.Notification_failed }}
       <td>Solo errores</td>
       {{else}}
       <td>Todas</td>
