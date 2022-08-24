@@ -3,7 +3,7 @@ module viltasks
 go 1.19
 
 require (
-	github.com/revel/config v1.1.0
+	github.com/revel/config v1.0.0
 	github.com/revel/modules v1.1.0
 	github.com/revel/revel v1.1.0
 	github.com/robfig/cron/v3 v3.0.1
