@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/revel/revel"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 )
 

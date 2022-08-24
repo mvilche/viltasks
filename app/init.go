@@ -66,7 +66,7 @@ var HeaderFilter = func(c *revel.Controller, fc []revel.Filter) {
 func ShowVersion() {
 
 	revel.AppLog.Info("Autor: Martin Fabrizzio Vilche")
-	revel.AppLog.Info("Version: 2.1.0")
+	revel.AppLog.Info("Version: 2.1.5")
 
 }
 

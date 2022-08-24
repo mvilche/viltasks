@@ -5,7 +5,7 @@ import (
 	"viltasks/app/models"
 
 	"github.com/revel/revel"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 )
 
 type Task struct {
