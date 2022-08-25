@@ -62,3 +62,12 @@ database.url = database/viltask.db
 auth.username = admin
 auth.password = admin123
 ```
+
+
+### Compilar
+
+1 - Clonar
+2 - go install -v github.com/revel/cmd/revel@v1.1.0
+3 - go install -v github.com/revel/revel@v1.1.0
+4 - go get -v github.com/revel/modules/static
+5 - revel run
