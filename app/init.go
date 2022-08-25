@@ -97,7 +97,7 @@ func InitMigrations() {
 
 	} else {
 
-		revel.AppLog.Error("Erro open database ", err.Error)
+		revel.AppLog.Error("Erro open database ", err)
 		os.Exit(1)
 	}
 

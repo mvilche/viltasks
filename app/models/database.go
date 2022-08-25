@@ -14,20 +14,25 @@ func OpenSQL() (*gorm.DB, error) {
 
 	c, err := config.ReadDefault("./conf/app.conf")
 	if err != nil {
-		revel.AppLog.Error("", err)
+		revel.AppLog.Error("Error al obtener app.conf file", err)
 		os.Exit(1)
 	}
 
-	var url, _ = c.String("database", "database.url")
+	var url, err2 = c.String("database", "database.url")
 
-	// github.com/mattn/go-sqlite3
+	if err2 != nil {
+		revel.AppLog.Error("Error al obtener database url", err)
+		os.Exit(1)
+	}
+	revel.AppLog.Debug("Se encontro database url: " + url)
+
 	db, err := gorm.Open(sqlite.Open(url), &gorm.Config{
 
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 
 	if err != nil {
-
+		revel.AppLog.Error("", err)
 		return db, err
 	}
 	//defer db.Close()
