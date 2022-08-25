@@ -67,7 +67,11 @@ auth.password = admin123
 ### Compilar
 
 1 - Clonar
+
 2 - go install -v github.com/revel/cmd/revel@latest
+
 3 - go install -v github.com/revel/revel@latest
+
 4 - go get -v github.com/revel/modules/static
+
 5 - revel run
